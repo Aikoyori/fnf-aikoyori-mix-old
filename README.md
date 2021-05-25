@@ -2,6 +2,11 @@
 
 ![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/Aikoyori/FNF-Aikoyori-Gaming-Mixes/latest) ![GitHub repo size](https://img.shields.io/github/repo-size/Aikoyori/FNF-Aikoyori-Gaming-Mixes) ![Lines of code](https://img.shields.io/tokei/lines/github/Aikoyori/FNF-Aikoyori-Gaming-Mixes) ![Supported platforms](https://img.shields.io/badge/supported%20platforms-windows%2C%20macOS%2C%20linux%2C%20html5-blue) ![GitHub all releases](https://img.shields.io/github/downloads/Aikoyori/FNF-Aikoyori-Gaming-Mixes/total) ![GitHub](https://img.shields.io/github/license/Aikoyori/FNF-Aikoyori-Gaming-Mixes) ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/Aikoyori/FNF-Aikoyori-Gaming-Mixes?include_prereleases&label=latest%20version) 
 
+![Windows Nightly Build](https://github.com/Aikoyori/FNF-Aikoyori-Gaming-Mixes/actions/workflows/deploy-windows.yml/badge.svg) 
+![Linux Nightly Build](https://github.com/Aikoyori/FNF-Aikoyori-Gaming-Mixes/actions/workflows/deploy-linux.yml/badge.svg) 
+![macOS Nightly Build](https://github.com/Aikoyori/FNF-Aikoyori-Gaming-Mixes/actions/workflows/deploy-page.yml/badge.svg) 
+![HTML5 Nightly Build](https://github.com/Aikoyori/FNF-Aikoyori-Gaming-Mixes/actions/workflows/deploy-windows.yml/badge.svg) 
+
 # Friday Night Funkin': Aikoyori's Gaming Mixes
 ## Friday Night Funkin'
 **Friday Night Funkin'** is a rhythm game originally made for Ludum Dare 47 "Stuck In a Loop".
