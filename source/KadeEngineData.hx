@@ -77,6 +77,9 @@ class KadeEngineData
 
 		if (FlxG.save.data.volume == null)
 			FlxG.save.data.volume = 0.5;
+		
+		if (FlxG.save.data.cpuStrums == null)
+			FlxG.save.data.cpuStrums = false;
 
 		Conductor.recalculateTimings();
 
