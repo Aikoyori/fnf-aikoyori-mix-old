@@ -4,8 +4,8 @@
 
 ![Windows Nightly Build](https://github.com/Aikoyori/FNF-Aikoyori-Gaming-Mixes/actions/workflows/deploy-windows.yml/badge.svg) 
 ![Linux Nightly Build](https://github.com/Aikoyori/FNF-Aikoyori-Gaming-Mixes/actions/workflows/deploy-linux.yml/badge.svg) 
-![macOS Nightly Build](https://github.com/Aikoyori/FNF-Aikoyori-Gaming-Mixes/actions/workflows/deploy-page.yml/badge.svg) 
-![HTML5 Nightly Build](https://github.com/Aikoyori/FNF-Aikoyori-Gaming-Mixes/actions/workflows/deploy-windows.yml/badge.svg) 
+![macOS Nightly Build](https://github.com/Aikoyori/FNF-Aikoyori-Gaming-Mixes/actions/workflows/deploy-macos.yml/badge.svg) 
+![HTML5 Nightly Build](https://github.com/Aikoyori/FNF-Aikoyori-Gaming-Mixes/actions/workflows/deploy-page.yml/badge.svg) 
 
 # Friday Night Funkin': Aikoyori's Gaming Mixes
 ## Friday Night Funkin'
