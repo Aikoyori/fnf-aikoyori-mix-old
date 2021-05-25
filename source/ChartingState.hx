@@ -294,7 +294,7 @@ class ChartingState extends MusicBeatState
 		//
 
 
-		var hitsounds = new FlxUICheckBox(10, stepperSongVol.y + 35, null, null, "Play hitsounds", 100);
+		var hitsounds = new FlxUICheckBox(10, restart.y + 35, null, null, "Play hitsounds", 100);
 		hitsounds.checked = false;
 		hitsounds.callback = function()
 		{
