@@ -14,6 +14,8 @@
 
 	<!--Minimum without FLX_NO_GAMEPAD: 11.8, without FLX_NO_NATIVE_CURSOR: 11.2-->
 	<set name="SWF_VERSION" value="11.8" />
+	<!--<android gradle-version="6.3" />-->
+	<!--<android target-sdk-version="23" />-->
 
 	<!-- ____________________________ Window Settings ___________________________ -->
 
