@@ -28,7 +28,7 @@ class MainMenuState extends MusicBeatState
 	var menuItems:FlxTypedGroup<FlxSprite>;
 
 	#if !switch
-	var optionShit:Array<String> = ['aikomode','story mode',   'freeplay','options'];
+	var optionShit:Array<String> = ['aikomode','story mode','freeplay','options'];
 	#else
 	var optionShit:Array<String> = ['aikomode','story mode', 'freeplay'];
 	#end
@@ -73,7 +73,7 @@ class MainMenuState extends MusicBeatState
 		camFollow = new FlxObject(0, 0, 1, 1);
 		add(camFollow);
 
-		magenta = new FlxSprite(-80).loadGraphic(Paths.image('menuDesat'));
+		magenta = new FlxSprite(-100).loadGraphic(Paths.image('menuDesat'));
 		magenta.scrollFactor.x = 0;
 		magenta.scrollFactor.y = 0.10;
 		magenta.setGraphicSize(Std.int(magenta.width * 1.1));
@@ -92,21 +92,15 @@ class MainMenuState extends MusicBeatState
 
 		for (i in 0...optionShit.length)
 		{
+			var menuItem:FlxSprite;
 			if(optionShit[i]=="aikomode")
 			{
-				var menuItem:FlxSprite = new FlxSprite(0, 60 + (i * 140));
-				menuItem.frames = tex;
-				menuItem.animation.addByPrefix('idle', optionShit[i] + " basic", 24);
-				menuItem.animation.addByPrefix('selected', optionShit[i] + " white", 24);
-				menuItem.animation.play('idle');
-				menuItem.ID = i;
-				menuItem.screenCenter(X);
-				menuItems.add(menuItem);
-				menuItem.scrollFactor.set();
-				menuItem.antialiasing = true;
-				continue;
+				menuItem = new FlxSprite(0, 60 + (i * 120));
 			}
-			var menuItem:FlxSprite = new FlxSprite(0, 60 + (i * 160));
+			else
+			{
+				menuItem = new FlxSprite(0, 60 + (i * 160));
+			}
 			menuItem.frames = tex;
 			menuItem.animation.addByPrefix('idle', optionShit[i] + " basic", 24);
 			menuItem.animation.addByPrefix('selected', optionShit[i] + " white", 24);
@@ -121,7 +115,10 @@ class MainMenuState extends MusicBeatState
 					{ 
 						finishedFunnyMove = true; 
 					}});
-			else
+					
+				if(optionShit[i]=="aikomode")
+				menuItem.y = 60 + (i * 120);
+				else
 				menuItem.y = 60 + (i * 160);
 		}
 
@@ -141,7 +138,8 @@ class MainMenuState extends MusicBeatState
 			controls.setKeyboardScheme(KeyboardScheme.Solo, true);
 		else
 			controls.setKeyboardScheme(KeyboardScheme.Duo(true), true);
-
+		curSelected = 0;
+		
 		changeItem();
 
 		super.create();
@@ -276,7 +274,7 @@ class MainMenuState extends MusicBeatState
 		{
 			spr.animation.play('idle');
 
-			if (spr.ID == curSelected && finishedFunnyMove)
+			if (spr.ID == curSelected)
 			{
 				spr.animation.play('selected');
 				camFollow.setPosition(spr.getGraphicMidpoint().x, spr.getGraphicMidpoint().y);

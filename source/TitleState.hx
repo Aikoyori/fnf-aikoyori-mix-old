@@ -306,7 +306,7 @@ class TitleState extends MusicBeatState
 			// FlxG.sound.music.stop();
 
 			MainMenuState.firstStart = true;
-
+			
 			new FlxTimer().start(2, function(tmr:FlxTimer)
 			{
 				// Get current version of Kade Engine
@@ -319,9 +319,9 @@ class TitleState extends MusicBeatState
 				{
 					returnedData[0] = data.substring(0, data.indexOf(';'));
 					returnedData[1] = data.substring(data.indexOf('-'), data.length);
-				  	if (!MainMenuState.kadeEngineVer.contains(returnedData[0].trim()) && !OutdatedSubState.leftState && MainMenuState.nightly == "" && FlxG.save.data.checkupdates)
+				  	if (!MainMenuState.aikoModVer.contains(returnedData[0].trim()) && !OutdatedSubState.leftState && MainMenuState.nightly == "" && FlxG.save.data.checkupdates)
 					{
-						trace('outdated lmao! ' + returnedData[0] + ' != ' + MainMenuState.kadeEngineVer);
+						trace('outdated lmao! ' + returnedData[0] + ' != ' + MainMenuState.aikoModVer);
 						OutdatedSubState.needVer = returnedData[0];
 						OutdatedSubState.currChanges = returnedData[1];
 						FlxG.switchState(new OutdatedSubState());
