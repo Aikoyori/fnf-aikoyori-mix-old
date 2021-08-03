@@ -1,15 +1,22 @@
 package;
 
+import flixel.FlxG;
 import flixel.FlxSprite;
+
+using StringTools;
 
 class HealthIcon extends FlxSprite
 {
+	public var char:String = 'bf';
+	public var isPlayer:Bool = false;
+	public var isOldIcon:Bool = false;
+
 	/**
 	 * Used for FreeplayState! If you use it elsewhere, prob gonna annoying
 	 */
 	public var sprTracker:FlxSprite;
 
-	public function new(char:String = 'bf', isPlayer:Bool = false)
+	public function new(?char:String = "bf", ?isPlayer:Bool = false)
 	{
 		super();
 		
@@ -42,13 +49,39 @@ class HealthIcon extends FlxSprite
 		animation.add('wallnut', [28,29], 0, false, isPlayer);
 		animation.play(char);
 
-		switch(char)
+		this.char = char;
+		this.isPlayer = isPlayer;
+
+		isPlayer = isOldIcon = false;
+
+		if (FlxG.save.data.antialiasing)
 		{
-			case 'bf-pixel' | 'senpai' | 'senpai-angry' | 'spirit' | 'gf-pixel':
-				antialiasing = false;
+			switch(char)
+			{
+				case 'bf-pixel' | 'senpai' | 'senpai-angry' | 'spirit' | 'gf-pixel':
+					antialiasing = false;
+				default:
+					antialiasing = true;
+			}
 		}
 
+		changeIcon(char);
 		scrollFactor.set();
+	}
+
+	public function swapOldIcon()
+	{
+		(isOldIcon = !isOldIcon) ? changeIcon("bf-old") : changeIcon(char);
+	}
+
+	public function changeIcon(char:String)
+	{
+		if (char != 'bf-pixel' && char != 'bf-old')
+			char = char.split("-")[0];
+
+		loadGraphic(Paths.image('icons/icon-' + char), true, 150, 150);
+		animation.add(char, [0, 1], 0, false, isPlayer);
+		animation.play(char);
 	}
 
 	override function update(elapsed:Float)
