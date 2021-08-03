@@ -32,12 +32,6 @@ class Note extends FlxSprite
 	public var isSustainNote:Bool = false;
 	public var originColor:Int = 0; // The sustain note's original note's color
 	public var noteSection:Int = 0;
-	
-	public var hittingNotRequired:Bool = false;
-	public var missingIsRequired:Bool = false;
-	public var noteType:String = "normal";
-
-	public var noteTypeList = ["sun","sun-extra","sun-bomb"];
 
 	public var noteCharterObject:FlxSprite;
 
@@ -67,11 +61,19 @@ class Note extends FlxSprite
 
 	public var children:Array<Note> = [];
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inCharter:Bool = false, ?noteType:String = "normal")
+	
+	
+	public var hittingNotRequired:Bool = false;
+	public var missingIsRequired:Bool = false;
+	public var noteType:String = "normal";
+
+	public var noteTypeList = ["sun","sun-extra","sun-bomb"];
+
+
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inCharter:Bool = false,?noteType:String = "normal")
 	{
-		
-		//FlxG.log.notice(strumTime + " " +noteData + " " +noteType);
 		super();
+
 		if (prevNote == null)
 			prevNote = this;
 
@@ -104,7 +106,7 @@ class Note extends FlxSprite
 			this.strumTime = 0;
 
 		this.noteData = noteData;
-		this.noteType = noteType;
+
 		var daStage:String = PlayState.curStage;
 
 		//defaults if no noteStyle was found in chart
@@ -121,12 +123,11 @@ class Note extends FlxSprite
 				animation.addByPrefix(dataColor[i] + 'holdend', dataColor[i] + ' tail'); // Tails
 			}
 			for (ea in noteTypeList)
-			{
-				animation.addByPrefix(ea + 'Scroll', ea + ' alone');
-				animation.addByPrefix(ea + 'hold', ea + ' hold');
-				animation.addByPrefix(ea + 'holdend', ea + ' tail');
-			}
-
+				{
+					animation.addByPrefix(ea + 'Scroll', ea + ' alone');
+					animation.addByPrefix(ea + 'hold', ea + ' hold');
+					animation.addByPrefix(ea + 'holdend', ea + ' tail');
+				}
 			setGraphicSize(Std.int(width * 0.7));
 			updateHitbox();
 			if(FlxG.save.data.antialiasing)
@@ -165,15 +166,12 @@ class Note extends FlxSprite
 						animation.addByPrefix(dataColor[i] + 'hold', dataColor[i] + ' hold'); // Hold
 						animation.addByPrefix(dataColor[i] + 'holdend', dataColor[i] + ' tail'); // Tails
 					}
-					
 					for (ea in noteTypeList)
 						{
 							animation.addByPrefix(ea + 'Scroll', ea + ' alone');
 							animation.addByPrefix(ea + 'hold', ea + ' hold');
 							animation.addByPrefix(ea + 'holdend', ea + ' tail');
 						}
-	
-
 					setGraphicSize(Std.int(width * 0.7));
 					updateHitbox();
 					
@@ -188,14 +186,11 @@ class Note extends FlxSprite
 		switch(noteType)
 		{
 			case 'sun':
-				x += swagWidth * noteData;
 				animation.play('sunScroll');
 			case 'sun-extra':
-				x += swagWidth * noteData;
 				animation.play('sun-extraScroll');
 				hittingNotRequired = true;
 			case 'sun-bomb':
-				x += swagWidth * noteData;
 				animation.play('sun-bombScroll');
 				missingIsRequired = true;
 				mustPress=false;
@@ -204,16 +199,12 @@ class Note extends FlxSprite
 			switch (noteData)
 			{
 				case 0:
-					x += swagWidth * 0;
 					animation.play('purpleScroll');
 				case 1:
-					x += swagWidth * 1;
 					animation.play('blueScroll');
 				case 2:
-					x += swagWidth * 2;
 					animation.play('greenScroll');
 				case 3:
-					x += swagWidth * 3;
 					animation.play('redScroll');
 			}
 		}
@@ -231,38 +222,8 @@ class Note extends FlxSprite
 
 			var col:Int = 0;
 			col = quantityColor[ind % 8]; // Set the color depending on the beats
-			switch(noteType)
-			{
-				case 'sun':
-					x += swagWidth * noteData;
-					animation.play('sunScroll');
-				case 'sun-extra':
-					x += swagWidth * noteData;
-					animation.play('sunExtraScroll');
-					hittingNotRequired = true;
-				case 'sun-bomb':
-					x += swagWidth * noteData;
-					animation.play('sunBombScroll');
-					missingIsRequired = true;
-					mustPress=false;
-					
-				default:
-				switch (noteData)
-				{
-					case 0:
-						x += swagWidth * 0;
-						animation.play('purpleScroll');
-					case 1:
-						x += swagWidth * 1;
-						animation.play('blueScroll');
-					case 2:
-						x += swagWidth * 2;
-						animation.play('greenScroll');
-					case 3:
-						x += swagWidth * 3;
-						animation.play('redScroll');
-				}
-			}
+
+			animation.play(dataColor[col] + 'Scroll');
 			localAngle -= arrowAngles[col];
 			localAngle += arrowAngles[noteData];
 			originColor = col;
@@ -306,7 +267,7 @@ class Note extends FlxSprite
 					case 0:
 						animation.play('purpleholdend');
 				}
-			}
+			} // This works both for normal colors and quantization colors
 			updateHitbox();
 
 			x -= width / 2;
@@ -317,7 +278,7 @@ class Note extends FlxSprite
 				x += 30;
 
 			if (prevNote.isSustainNote)
-			{					
+			{
 				switch(noteType)
 				{
 					case 'sun':
@@ -396,7 +357,7 @@ class Note extends FlxSprite
 				wasGoodHit = true;
 		}
 
-		if (tooLate && !wasGoodHit)
+		if (tooLate)
 		{
 			if (alpha > 0.3)
 				alpha = 0.3;

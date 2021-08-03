@@ -1993,7 +1993,7 @@ class PlayState extends MusicBeatState
 					oldNote = null;
 
 
-				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote,songNotes[2]>0,false,songNotes[3]);
+				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote,false,false,songNotes[3]);
 
 				if (!gottaHitNote && PlayStateChangeables.Optimize)
 					continue;
