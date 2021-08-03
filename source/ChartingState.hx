@@ -1695,9 +1695,7 @@ class ChartingState extends MusicBeatState
 						vocals.time = FlxG.sound.music.time;
 					}
 				}
-		}
-
-		if (updateFrame == 4)
+		}if (updateFrame == 4)
 		{
 			TimingStruct.clearTimings();
 
@@ -1708,63 +1706,53 @@ class ChartingState extends MusicBeatState
 					{
 						var beat:Float = i.position;
 
-				if (nums.value <= 0)
-					nums.value = 0;
-				curSelectedNote[2] = nums.value;
-				updateGrid();
-			}
-			else if (wname == 'section_bpm')
-			{
-				if (nums.value <= 0.1)
-					nums.value = 0.1;
-				_song.notes[curSection].bpm = Std.int(nums.value);
-				updateGrid();
-			}else if (wname == 'song_vocalvol')
-			{
-				if (nums.value <= 0.1)
-					nums.value = 0.1;
-				vocals.volume = nums.value;
-			}else if (wname == 'song_instvol')
-			{
-				if (nums.value <= 0.1)
-					nums.value = 0.1;
-				FlxG.sound.music.volume = nums.value;
-			}
-			else if (wname == 'song_loopat')
-			{
-				_song.loopAtStep = Std.int(nums.value);
-			}
-			else if (wname == 'song_loopto')
-			{
-				_song.loopToStep = Std.int(nums.value);
-			}
-			else if (wname == 'song_opponenthealth')
-			{
-				_song.opponentHealth = (nums.value);
-			}
-			else if (wname == 'song_startinghealth')
-			{
-				_song.startingHealth = (nums.value);
-			}
-		}
-		if (id == FlxUIDropDownMenu.CLICK_EVENT && (sender is FlxUIDropDownMenu))
-		{
-			var data:FlxUIDropDownMenu = cast sender;
-			var wname = data.name;
-			FlxG.log.add(wname);
-			if (wname == 'note_noteType')
-				{
-					if (curSelectedNote == null)
-						return;
-	
-					if (data.selectedLabel == "")
-						data.selectedLabel = "normal";
-					curSelectedNote[3] = data.selectedLabel;
-					updateGrid();
+						var endBeat:Float = Math.POSITIVE_INFINITY;
+
+						TimingStruct.addTiming(beat,i.value,endBeat, 0); // offset in this case = start time since we don't have a offset
+						
+						if (currentIndex != 0)
+						{
+							var data = TimingStruct.AllTimings[currentIndex - 1];
+							data.endBeat = beat;
+							data.length = (data.endBeat - data.startBeat) / (data.bpm / 60);
+							var step = ((60 / data.bpm) * 1000) / 4;
+							TimingStruct.AllTimings[currentIndex].startStep = Math.floor(((data.endBeat / (data.bpm / 60)) * 1000) / step);
+							TimingStruct.AllTimings[currentIndex].startTime = data.startTime + data.length;
+						}
+
+						currentIndex++;
+					}
 				}
+
+				recalculateAllSectionTimes();
+
+				regenerateLines();
+				updateFrame++;
 		}
 		else if (updateFrame != 5)
 			updateFrame++;
+
+		snapText.text = "Snap: 1/" + snap + " (" + (doSnapShit ? "Shift to disable, Left or Right to increase/decrease" : "Snap Disabled, Shift to renable.") + ")\nAdd Notes: 1-8 (or click)\nZoom: " + zoomFactor;
+
+
+		if (FlxG.keys.justPressed.RIGHT)
+			snap = snap * 2;
+		if (FlxG.keys.justPressed.LEFT)
+			snap = Math.round(snap / 2);
+		if (snap >= 64)
+			snap = 64;
+		if (snap <= 4)
+			snap = 4;
+		/*
+		if (FlxG.keys.justPressed.SHIFT)
+			doSnapShit = !doSnapShit;
+		*/
+
+		doSnapShit = defaultSnap;
+		if (FlxG.keys.pressed.SHIFT)
+		{
+			doSnapShit = !defaultSnap;
+		}
 
 		snapText.text = "Snap: 1/" + snap + " (" + (doSnapShit ? "Shift to disable, Left or Right to increase/decrease" : "Snap Disabled, Shift to renable.") + ")\nAdd Notes: 1-8 (or click)\nZoom: " + zoomFactor;
 
@@ -2155,8 +2143,8 @@ class ChartingState extends MusicBeatState
 			if (FlxG.keys.justPressed.DOWN)
 				Conductor.changeBPM(Conductor.bpm - 1); */
 		super.update(elapsed);
-		}
 	}
+	
 
 	function changeNoteSustain(value:Float):Void
 	{
@@ -2432,9 +2420,11 @@ class ChartingState extends MusicBeatState
 		_song.notes.push(sec);
 	}
 
-	private function prependSection(lengthInSteps:Int = 16):SwagSection
+	private function prependSection(lengthInSteps:Int = 16,daPos):SwagSection
 	{
 		var sec:SwagSection = {
+			startTime: daPos,
+			endTime: Math.POSITIVE_INFINITY,
 			lengthInSteps: lengthInSteps,
 			bpm: _song.bpm,
 			changeBPM: false,
@@ -2443,7 +2433,6 @@ class ChartingState extends MusicBeatState
 			typeOfSection: 0,
 			altAnim: false
 		};
-
 		return sec;
 	}
 

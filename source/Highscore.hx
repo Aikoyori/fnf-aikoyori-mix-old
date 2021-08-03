@@ -35,7 +35,7 @@ class Highscore
 		}else trace('BotPlay detected. Score saving is disabled.');
 	}
 
-	public static function saveCombo(song:String, combo:String, ?diff:Int = 0):Void
+	public static function saveCombo(song:String, combo:String, ?diff:Int = 0)
 	{
 		var daSong:String = formatSong(song, diff);
 		var finalCombo:String = combo.split(')')[0].replace('(', '');
