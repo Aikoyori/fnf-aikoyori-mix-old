@@ -1,5 +1,6 @@
 package;
 
+import flixel.input.gamepad.FlxGamepad;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
@@ -23,20 +24,21 @@ class AikoModeMenuState extends MusicBeatState
 {
 	var scoreText:FlxText;
 
-	var weekData:Array<Dynamic> = [
-		['Loonboon','Brainiac-Maniac','Zombies-on-your-lawn'],
-	];
+	static function weekData():Array<Dynamic>
+	{
+		return [
+			['Loonboon','Brainiac-Maniac','Zombies-on-your-lawn'],
+		];
+	}
 	var curDifficulty:Int = 1;
 
-	public static var weekUnlocked:Array<Bool> = [true, true, true, true, true, true, true];
+	public static var weekUnlocked:Array<Bool> = [true,true,true,true];
 
 	var weekCharacters:Array<Dynamic> = [
 		['', 'bf', 'gf'],
 	];
 
-	var weekNames:Array<String> = [
-		"Plants vs Zombies",
-	];
+	var weekNames:Array<String> = CoolUtil.coolTextFile(Paths.txt('data/aikoWeekNames'));
 
 	var txtWeekTitle:FlxText;
 
@@ -44,7 +46,7 @@ class AikoModeMenuState extends MusicBeatState
 
 	var txtTracklist:FlxText;
 
-	var grpWeekText:FlxTypedGroup<AikoMenuItem>;
+	var grpWeekText:FlxTypedGroup<MenuItem>;
 	var grpWeekCharacters:FlxTypedGroup<MenuCharacter>;
 
 	var grpLocks:FlxTypedGroup<FlxSprite>;
@@ -54,11 +56,31 @@ class AikoModeMenuState extends MusicBeatState
 	var leftArrow:FlxSprite;
 	var rightArrow:FlxSprite;
 
+	function unlockWeeks():Array<Bool>
+	{
+		var weeks:Array<Bool> = [];
+		#if debug
+		for(i in 0...weekNames.length)
+			weeks.push(true);
+		return weeks;
+		#end
+		
+		weeks.push(true);
+
+		for(i in 0...FlxG.save.data.weekUnlocked)
+			{
+				weeks.push(true);
+			}
+		return weeks;
+	}
+
 	override function create()
 	{
+		weekUnlocked = unlockWeeks();
+
 		#if windows
 		// Updating Discord Rich Presence
-		DiscordClient.changePresence("In Aiko's Mode Menu", null);
+		DiscordClient.changePresence("In the Story Mode Menu", null);
 		#end
 
 		transIn = FlxTransitionableState.defaultTransIn;
@@ -67,7 +89,10 @@ class AikoModeMenuState extends MusicBeatState
 		if (FlxG.sound.music != null)
 		{
 			if (!FlxG.sound.music.playing)
+			{
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				Conductor.changeBPM(102);
+			}
 		}
 
 		persistentUpdate = persistentDraw = true;
@@ -88,39 +113,46 @@ class AikoModeMenuState extends MusicBeatState
 		var ui_tex = Paths.getSparrowAtlas('campaign_menu_UI_assets');
 		var yellowBG:FlxSprite = new FlxSprite(0, 56).makeGraphic(FlxG.width, 400, 0xFFff73c0);
 
-		grpWeekText = new FlxTypedGroup<AikoMenuItem>();
+		grpWeekText = new FlxTypedGroup<MenuItem>();
 		add(grpWeekText);
+
+		grpLocks = new FlxTypedGroup<FlxSprite>();
+		add(grpLocks);
 
 		var blackBarThingie:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, 56, FlxColor.BLACK);
 		add(blackBarThingie);
 
 		grpWeekCharacters = new FlxTypedGroup<MenuCharacter>();
 
-		grpLocks = new FlxTypedGroup<FlxSprite>();
-		add(grpLocks);
-
 		trace("Line 70");
 
-		for (i in 0...weekData.length)
+		for (i in 0...weekData().length)
 		{
-			var weekThing:AikoMenuItem = new AikoMenuItem(0, yellowBG.y + yellowBG.height + 10, i+1);
+			var weekThing:MenuItem = new MenuItem(0, yellowBG.y + yellowBG.height + 10, i,true);
 			weekThing.y += ((weekThing.height + 20) * i);
 			weekThing.targetY = i;
 			grpWeekText.add(weekThing);
 
 			weekThing.screenCenter(X);
-			weekThing.antialiasing = true;
+			if(FlxG.save.data.antialiasing)
+				{
+					weekThing.antialiasing = true;
+				}
 			// weekThing.updateHitbox();
 
 			// Needs an offset thingie
 			if (!weekUnlocked[i])
 			{
+				trace('locking week ' + i);
 				var lock:FlxSprite = new FlxSprite(weekThing.width + 10 + weekThing.x);
 				lock.frames = ui_tex;
 				lock.animation.addByPrefix('lock', 'lock');
 				lock.animation.play('lock');
 				lock.ID = i;
-				lock.antialiasing = true;
+				if(FlxG.save.data.antialiasing)
+					{
+						lock.antialiasing = true;
+					}
 				grpLocks.add(lock);
 			}
 		}
@@ -176,6 +208,19 @@ class AikoModeMenuState extends MusicBeatState
 
 		updateText();
 
+
+		var bullShit:Int = 0;
+
+		for (item in grpWeekText.members)
+		{
+			item.targetY = bullShit - curWeek;
+			if (item.targetY == Std.int(0) && weekUnlocked[curWeek])
+				item.alpha = 1;
+			else
+				item.alpha = 0.6;
+			bullShit++;
+		}
+
 		trace("Line 165");
 
 		super.create();
@@ -204,12 +249,44 @@ class AikoModeMenuState extends MusicBeatState
 		{
 			if (!selectedWeek)
 			{
-				if (controls.UP_P)
+				var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
+
+				if (gamepad != null)
+				{
+					if (gamepad.justPressed.DPAD_UP)
+					{
+						changeWeek(-1);
+					}
+					if (gamepad.justPressed.DPAD_DOWN)
+					{
+						changeWeek(1);
+					}
+
+					if (gamepad.pressed.DPAD_RIGHT)
+						rightArrow.animation.play('press')
+					else
+						rightArrow.animation.play('idle');
+					if (gamepad.pressed.DPAD_LEFT)
+						leftArrow.animation.play('press');
+					else
+						leftArrow.animation.play('idle');
+
+					if (gamepad.justPressed.DPAD_RIGHT)
+					{
+						changeDifficulty(1);
+					}
+					if (gamepad.justPressed.DPAD_LEFT)
+					{
+						changeDifficulty(-1);
+					}
+				}
+
+				if (FlxG.keys.justPressed.UP)
 				{
 					changeWeek(-1);
 				}
 
-				if (controls.DOWN_P)
+				if (FlxG.keys.justPressed.DOWN)
 				{
 					changeWeek(1);
 				}
@@ -243,6 +320,9 @@ class AikoModeMenuState extends MusicBeatState
 			FlxG.switchState(new MainMenuState());
 		}
 
+		if (FlxG.sound.music != null)
+			Conductor.songPosition = FlxG.sound.music.time;
+
 		super.update(elapsed);
 	}
 
@@ -263,25 +343,30 @@ class AikoModeMenuState extends MusicBeatState
 				stopspamming = true;
 			}
 
-			PlayState.storyPlaylist = weekData[curWeek];
-			PlayState.isAikoMode = true;
+			PlayState.storyPlaylist = weekData()[curWeek];
+			PlayState.isStoryMode = true;
 			selectedWeek = true;
 
-			var diffic = "";
-
-			switch (curDifficulty)
-			{
-				case 0:
-					diffic = '-easy';
-				case 2:
-					diffic = '-hard';
-			}
 
 			PlayState.storyDifficulty = curDifficulty;
 
-			PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + diffic, PlayState.storyPlaylist[0].toLowerCase());
+			// adjusting the song name to be compatible
+			var songFormat = StringTools.replace(PlayState.storyPlaylist[0], " ", "-");
+			switch (songFormat) {
+				case 'Dad-Battle': songFormat = 'Dadbattle';
+				case 'Philly-Nice': songFormat = 'Philly';
+			}
+
+			var poop:String = Highscore.formatSong(songFormat, curDifficulty);
+			PlayState.sicks = 0;
+			PlayState.bads = 0;
+			PlayState.shits = 0;
+			PlayState.goods = 0;
+			PlayState.campaignMisses = 0;
+			PlayState.SONG = Song.loadFromJson(poop, PlayState.storyPlaylist[0]);
 			PlayState.storyWeek = curWeek;
 			PlayState.campaignScore = 0;
+			PlayState.isAikoMode = true;
 			new FlxTimer().start(1, function(tmr:FlxTimer)
 			{
 				LoadingState.loadAndSwitchState(new PlayState(), true);
@@ -317,10 +402,10 @@ class AikoModeMenuState extends MusicBeatState
 
 		// USING THESE WEIRD VALUES SO THAT IT DOESNT FLOAT UP
 		sprDifficulty.y = leftArrow.y - 15;
-		intendedScore = Highscore.getAikoWeekScore(curWeek, curDifficulty);
+		intendedScore = Highscore.getWeekScore(curWeek, curDifficulty);
 
 		#if !switch
-		intendedScore = Highscore.getAikoWeekScore(curWeek, curDifficulty);
+		intendedScore = Highscore.getWeekScore(curWeek, curDifficulty);
 		#end
 
 		FlxTween.tween(sprDifficulty, {y: leftArrow.y + 15, alpha: 1}, 0.07);
@@ -333,10 +418,10 @@ class AikoModeMenuState extends MusicBeatState
 	{
 		curWeek += change;
 
-		if (curWeek >= weekData.length)
+		if (curWeek >= weekData().length)
 			curWeek = 0;
 		if (curWeek < 0)
-			curWeek = weekData.length - 1;
+			curWeek = weekData().length - 1;
 
 		var bullShit:Int = 0;
 
@@ -362,7 +447,7 @@ class AikoModeMenuState extends MusicBeatState
 		grpWeekCharacters.members[2].setCharacter(weekCharacters[curWeek][2]);
 
 		txtTracklist.text = "Tracks\n";
-		var stringThing:Array<String> = weekData[curWeek];
+		var stringThing:Array<String> = weekData()[curWeek];
 
 		for (i in stringThing)
 			txtTracklist.text += "\n" + i;
@@ -375,7 +460,28 @@ class AikoModeMenuState extends MusicBeatState
 		txtTracklist.text += "\n";
 
 		#if !switch
-		intendedScore = Highscore.getAikoWeekScore(curWeek, curDifficulty);
+		intendedScore = Highscore.getWeekScore(curWeek, curDifficulty);
 		#end
+	}
+
+	public static function unlockNextWeek(week:Int):Void
+	{
+		if(week <= weekData().length - 1 && FlxG.save.data.weekUnlocked == week)
+		{
+			weekUnlocked.push(true);
+			trace('Week ' + week + ' beat (Week ' + (week + 1) + ' unlocked)');
+		}
+
+		FlxG.save.data.weekUnlocked = weekUnlocked.length - 1;
+		FlxG.save.flush();
+	}
+
+	override function beatHit()
+	{
+		super.beatHit();
+
+		grpWeekCharacters.members[0].bopHead();
+		grpWeekCharacters.members[1].bopHead();
+		grpWeekCharacters.members[2].bopHead();
 	}
 }

@@ -185,38 +185,14 @@ class Note extends FlxSprite
 		}
 
 		x += swagWidth * noteData;
-		switch(noteType)
-		{
-			case 'sun':
-				x += swagWidth * noteData;
-				animation.play('sunScroll');
-			case 'sun-extra':
-				x += swagWidth * noteData;
-				animation.play('sun-extraScroll');
-				hittingNotRequired = true;
-			case 'sun-bomb':
-				x += swagWidth * noteData;
-				animation.play('sun-bombScroll');
-				missingIsRequired = true;
-				mustPress=false;
-				
-			default:
-			switch (noteData)
+		if(noteType != "normal" && noteType != "")
 			{
-				case 0:
-					x += swagWidth * 0;
-					animation.play('purpleScroll');
-				case 1:
-					x += swagWidth * 1;
-					animation.play('blueScroll');
-				case 2:
-					x += swagWidth * 2;
-					animation.play('greenScroll');
-				case 3:
-					x += swagWidth * 3;
-					animation.play('redScroll');
+				animation.play(noteType + 'Scroll');
 			}
-		}
+			else 
+			{
+				animation.play(dataColor[noteData] + 'Scroll');
+			}
 		originColor = noteData; // The note's origin color will be checked by its sustain notes
 
 		if (FlxG.save.data.stepMania && !isSustainNote)
@@ -231,38 +207,14 @@ class Note extends FlxSprite
 
 			var col:Int = 0;
 			col = quantityColor[ind % 8]; // Set the color depending on the beats
-			switch(noteType)
-			{
-				case 'sun':
-					x += swagWidth * noteData;
-					animation.play('sunScroll');
-				case 'sun-extra':
-					x += swagWidth * noteData;
-					animation.play('sunExtraScroll');
-					hittingNotRequired = true;
-				case 'sun-bomb':
-					x += swagWidth * noteData;
-					animation.play('sunBombScroll');
-					missingIsRequired = true;
-					mustPress=false;
-					
-				default:
-				switch (noteData)
+			if(noteType != "normal" && noteType != "")
 				{
-					case 0:
-						x += swagWidth * 0;
-						animation.play('purpleScroll');
-					case 1:
-						x += swagWidth * 1;
-						animation.play('blueScroll');
-					case 2:
-						x += swagWidth * 2;
-						animation.play('greenScroll');
-					case 3:
-						x += swagWidth * 3;
-						animation.play('redScroll');
+					animation.play(noteType + 'Scroll');
 				}
-			}
+				else 
+				{
+					animation.play(dataColor[col] + 'Scroll');
+				}
 			localAngle -= arrowAngles[col];
 			localAngle += arrowAngles[noteData];
 			originColor = col;
@@ -285,28 +237,14 @@ class Note extends FlxSprite
 			x += width / 2;
 
 			originColor = prevNote.originColor; 
-
-			switch(noteType)
-			{
-				case 'sun':
-					animation.play('sunholdend');
-				case 'sun-extra':
-					animation.play('sun-extraholdend');
-				case 'sun-bomb':
-					animation.play('sun-bombholdend');
-				default:
-				switch (noteData)
+			if(noteType != "normal" && noteType != "")
 				{
-					case 2:
-						animation.play('greenholdend');
-					case 3:
-						animation.play('redholdend');
-					case 1:
-						animation.play('blueholdend');
-					case 0:
-						animation.play('purpleholdend');
+					animation.play(noteType + 'holdend');
 				}
-			}
+				else 
+				{
+					animation.play(dataColor[originColor] + 'holdend');
+				} // This works both for normal colors and quantization colors
 			updateHitbox();
 
 			x -= width / 2;
@@ -317,27 +255,14 @@ class Note extends FlxSprite
 				x += 30;
 
 			if (prevNote.isSustainNote)
-			{					
-				switch(noteType)
+			{			
+				if(noteType != "normal" && noteType != "")
 				{
-					case 'sun':
-						animation.play('sunhold');
-					case 'sun-extra':
-						animation.play('sun-extrahold');
-					case 'sun-bomb':
-						animation.play('sun-bombhold');
-					default:
-					switch (prevNote.noteData)
-					{
-						case 0:
-							prevNote.animation.play('purplehold');
-						case 1:
-							prevNote.animation.play('bluehold');
-						case 2:
-							prevNote.animation.play('greenhold');
-						case 3:
-							prevNote.animation.play('redhold');
-					}
+					animation.play(noteType + 'hold');
+				}
+				else 
+				{
+					animation.play(dataColor[prevNote.originColor] + 'hold');
 				}
 				prevNote.updateHitbox();
 

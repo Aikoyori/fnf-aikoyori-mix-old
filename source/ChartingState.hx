@@ -1106,11 +1106,11 @@ class ChartingState extends MusicBeatState
 
 
 		
-		var characters:Array<String> = CoolUtil.coolTextFile(Paths.txt('characterList'));
-		var gfVersions:Array<String> = CoolUtil.coolTextFile(Paths.txt('gfVersionList'));
-		var stages:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
-		var noteStyles:Array<String> = CoolUtil.coolTextFile(Paths.txt('noteStyleList'));
-		var gimmicksList:Array<String> = CoolUtil.coolTextFile(Paths.txt('gimmickList'));
+		var characters:Array<String> = CoolUtil.coolTextFile(Paths.txt('data/characterList'));
+		var gfVersions:Array<String> = CoolUtil.coolTextFile(Paths.txt('data/gfVersionList'));
+		var stages:Array<String> = CoolUtil.coolTextFile(Paths.txt('data/stageList'));
+		var noteStyles:Array<String> = CoolUtil.coolTextFile(Paths.txt('data/noteStyleList'));
+		var gimmicksList:Array<String> = CoolUtil.coolTextFile(Paths.txt('data/gimmickList'));
 
 		var player1DropDown = new FlxUIDropDownMenu(10, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
 		{
@@ -1337,7 +1337,7 @@ class ChartingState extends MusicBeatState
 		stepperSusLength.value = 0;
 		stepperSusLength.name = 'note_susLength';
 		
-		var noteTypes:Array<String> = CoolUtil.coolTextFile(Paths.txt('noteTypesList'));
+		var noteTypes:Array<String> = CoolUtil.coolTextFile(Paths.txt('data/noteTypesList'));
 		
 		noteTypeDropDown = new FlxUIDropDownMenu(10, 50, FlxUIDropDownMenu.makeStrIdLabelArray(noteTypes, true), function(noteType:String)
 			{
@@ -1865,7 +1865,7 @@ class ChartingState extends MusicBeatState
 			var i = pressArray[p];
 			if (i && !delete)
 			{
-				addNote(new Note(Conductor.songPosition,p));
+				addNote(new Note(Conductor.songPosition,p,null,false,true,currentNoteType));
 			}
 		}
 		}
@@ -2356,9 +2356,10 @@ class ChartingState extends MusicBeatState
 				var daStrumTime = i[0];
 				var daSus = i[2];
 
-				var note:Note = new Note(daStrumTime, daNoteInfo % 4,null,false,true);
+				var note:Note = new Note(daStrumTime, daNoteInfo % 4,null,false,true,i[3]);
 				note.rawNoteData = daNoteInfo;
 				note.sustainLength = daSus;
+				note.noteType = i[3];
 				note.setGraphicSize(Math.floor(GRID_SIZE), Math.floor(GRID_SIZE));
 				note.updateHitbox();
 				note.x = Math.floor(daNoteInfo * GRID_SIZE);

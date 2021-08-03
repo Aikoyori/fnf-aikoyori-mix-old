@@ -373,6 +373,7 @@ class FreeplayState extends MusicBeatState
 			try
 			{
 				hmm = songData.get(songs[curSelected].songName)[curDifficulty];
+				trace(hmm);
 				if (hmm == null)
 					return;
 			}
@@ -477,9 +478,16 @@ class FreeplayState extends MusicBeatState
 		combo = Highscore.getCombo(songHighscore, curDifficulty);
 		// lerpScore = 0;
 		#end
+		try
+			{
 
-		diffCalcText.text = 'RATING: ${DiffCalc.CalculateDiff(songData.get(songs[curSelected].songName)[curDifficulty])}';
-		
+				diffCalcText.text = 'RATING: ${DiffCalc.CalculateDiff(songData.get(songs[curSelected].songName)[curDifficulty])}';
+			}
+		catch(ex)
+			{
+				diffCalcText.text = "FAILED 2 calc";
+				trace(ex);
+			}
 		#if PRELOAD_ALL
 		if (songs[curSelected].songCharacter == "sm")
 		{

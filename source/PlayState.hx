@@ -1992,15 +1992,20 @@ class PlayState extends MusicBeatState
 				else
 					oldNote = null;
 
-				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote);
+
+				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote,songNotes[2]>0,false,songNotes[3]);
 
 				if (!gottaHitNote && PlayStateChangeables.Optimize)
 					continue;
 
 				swagNote.sustainLength = songNotes[2];
-				if(songNotes.length >= 4)
+				if(songNotes.length > 3)
 					{
 						swagNote.noteType = songNotes[3];
+					}
+				else
+					{
+						swagNote.noteType = "normal";
 					}
 				swagNote.scrollFactor.set(0, 0);
 
@@ -2018,10 +2023,11 @@ class PlayState extends MusicBeatState
 				{
 					oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 
-					var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, oldNote, true, songNotes[3]);
+					var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, oldNote, true,false, songNotes[3]);
 					sustainNote.scrollFactor.set();
 					unspawnNotes.push(sustainNote);
 
+					sustainNote.noteType = swagNote.noteType;
 					sustainNote.mustPress = gottaHitNote;
 
 					if (sustainNote.mustPress)
@@ -2122,12 +2128,16 @@ class PlayState extends MusicBeatState
 				else
 					oldNote = null;
 
-				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, songNotes[3]);
+				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false,false,songNotes[3]);
 				swagNote.sustainLength = songNotes[2];
 				if(songNotes.length >= 4)
 					{
 						swagNote.noteType = songNotes[3];
 					}
+					else
+						{
+							swagNote.noteType = "normal";
+						}
 				swagNote.scrollFactor.set(0, 0);
 
 				var susLength:Float = swagNote.sustainLength;
@@ -2139,7 +2149,8 @@ class PlayState extends MusicBeatState
 				{
 					oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 
-					var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, oldNote, true, songNotes[3]);
+					var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, oldNote, true,false,songNotes[3]);
+					sustainNote.noteType = swagNote.noteType;
 					sustainNote.scrollFactor.set();
 					unspawnNotes.push(sustainNote);
 
@@ -3370,8 +3381,11 @@ class PlayState extends MusicBeatState
 								else
 								{
 									if (!daNote.isSustainNote)
+										if(!(daNote.hittingNotRequired || daNote.missingIsRequired))
+											{
 										health -= 0.10;
-									vocals.volume = 0;
+										vocals.volume = 0;
+											}
 									if (theFunne && !daNote.isSustainNote)
 										noteMiss(daNote.noteData, daNote);
 									if (daNote.isParent)
@@ -3408,14 +3422,23 @@ class PlayState extends MusicBeatState
 							else
 							{
 								if (!daNote.isSustainNote)
+								if(!(daNote.hittingNotRequired || daNote.missingIsRequired))
+
+									{
+										
 									health -= 0.10;
 								vocals.volume = 0;
+									}
 								if (theFunne && !daNote.isSustainNote)
 									noteMiss(daNote.noteData, daNote);
 
 								if (daNote.isParent)
 								{
-									health -= 0.20; // give a health punishment for failing a LN
+									if(!(daNote.hittingNotRequired || daNote.missingIsRequired))
+										{
+											
+									health -= 0.20;
+										} // give a health punishment for failing a LN
 									trace("hold fell over at the start");
 									for (i in daNote.children)
 									{
@@ -3752,39 +3775,114 @@ class PlayState extends MusicBeatState
 			totalNotesHit += wife;
 
 		var daRating = daNote.rating;
-
-		switch (daRating)
+		switch(daRating)
 		{
 			case 'shit':
+			if(!(daNote.hittingNotRequired || daNote.missingIsRequired))
+				{
+
+					score = -300;
+					combo = 0;
+					misses++;
+					health -= 0.2;
+					ss = false;
+					shits++;
+					if (FlxG.save.data.accuracyMod == 0)
+						totalNotesHit += 0.25;
+				}
+				else
+				{
+					daRating == "dontshow";
+				}
+			case 'bad':
+			if (daNote.missingIsRequired)
+				{
+					playMissAnim(daNote.noteData);
+				daRating = 'bad';
 				score = -300;
 				combo = 0;
-				misses++;
-				health -= 0.06;
+				health -= 0.2 ;
 				ss = false;
-				shits++;
-				if (FlxG.save.data.accuracyMod == 0)
-					totalNotesHit -= 1;
-			case 'bad':
-				daRating = 'bad';
-				score = 0;
-				health -= 0.03;
-				ss = false;
+				noteMiss(daNote.noteData,daNote);
 				bads++;
 				if (FlxG.save.data.accuracyMod == 0)
 					totalNotesHit += 0.50;
+				}
+			else if(!daNote.hittingNotRequired)
+				{
+					playMissAnim(daNote.noteData);
+				daRating = 'bad';
+				score = 10;
+				bads++;
+				noteDoSomething(daNote);
+				if (FlxG.save.data.accuracyMod == 0)
+					totalNotesHit += 0.50;
+				}
+			else
+				{
+				daRating = 'bad';
+				score = 0;
+				health -= 0.06;
+				ss = false;
+				bads++;
+				noteDoSomething(daNote);
+				if (FlxG.save.data.accuracyMod == 0)
+					totalNotesHit += 0.50;
+				}
 			case 'good':
+				
+			if (daNote.missingIsRequired)
+				{
+					playMissAnim(daNote.noteData);
+				daRating = 'bad';
+				combo = 0;
+				score = -700;
+				health -= 0.2;
+				ss = false;
+				misses++;
+				bads++;
+				noteMiss(daNote.noteData,daNote);
+				if (FlxG.save.data.accuracyMod == 0)
+					totalNotesHit += 0.25;
+				}
+			else 
+				{
 				daRating = 'good';
 				score = 200;
+				noteDoSomething(daNote);
+				if(daNote.hittingNotRequired)
 				ss = false;
 				goods++;
+				if (health < maxhealth)
+					health += 0.04;
 				if (FlxG.save.data.accuracyMod == 0)
 					totalNotesHit += 0.75;
+			}
 			case 'sick':
-				if (health < 2)
-					health += 0.04;
+				
+			if (daNote.missingIsRequired)
+				{
+					playMissAnim(daNote.noteData);
+					combo = 0;
+				daRating = 'shit';
+				score = -1500;
+				health -= 0.2;
+				ss = false;
+				misses++;
+				shits++;
+				noteMiss(daNote.noteData,daNote);
+				if (FlxG.save.data.accuracyMod == 0)
+					totalNotesHit += 0;
+				}
+			else 
+				{
+				noteDoSomething(daNote);
+				if (health < maxhealth)
+					health += 0.1;
 				if (FlxG.save.data.accuracyMod == 0)
 					totalNotesHit += 1;
 				sicks++;
+				}
 		}
 
 			if (FlxG.save.data.accuracyMod == 1)
@@ -4680,19 +4778,22 @@ class PlayState extends MusicBeatState
 
 		if (note.rating == "miss")
 			return;
-						
-				switch(note.noteType)
-				{
-					case 'sun':
-						FlxG.sound.play(Paths.sound('sunCollect'));
-					case 'sun-extra':
-						FlxG.sound.play(Paths.sound('sunCollect'));
-
-				}
+			
 				// add newest note to front of notesHitArray
 				// the oldest notes are at the end and are removed first
-				if (!note.isSustainNote)
+				if (!note.isSustainNote){
 					notesHitArray.unshift(Date.now());
+		switch(note.noteType)
+		{
+			case 'sun':
+				FlxG.sound.play(Paths.sound('sunCollect'));
+			case 'sun-extra':
+				FlxG.sound.play(Paths.sound('sunCollect'));
+
+		}}
+					
+		
+
 
 		if (!resetMashViolation && mashViolations >= 1)
 			mashViolations--;

@@ -62,7 +62,7 @@ class Caching extends MusicBeatState
 
 		bitmapData = new Map<String,FlxGraphic>();
 
-		text = new FlxText(FlxG.width / 2, FlxG.height / 2 + 300,0,"Loading...");
+		text = new FlxText(FlxG.width / 2, FlxG.height / 2 + 200,0,"Loading...");
 		text.size = 34;
 		text.alignment = FlxTextAlign.CENTER;
 		text.alpha = 0;
@@ -70,7 +70,7 @@ class Caching extends MusicBeatState
 		kadeLogo = new FlxSprite(FlxG.width / 2, FlxG.height / 2).loadGraphic(Paths.image('AikoGamingMixesLogo'));
 		kadeLogo.x -= kadeLogo.width / 2;
 		kadeLogo.y -= kadeLogo.height / 2 + 100;
-		text.y += 125;
+		text.y += 0;
 		text.x -= 170;
 		kadeLogo.setGraphicSize(Std.int(kadeLogo.width * 0.2));
 		kadeLogo.antialiasing = true;

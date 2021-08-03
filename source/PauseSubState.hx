@@ -263,7 +263,7 @@ class PauseSubState extends MusicBeatSubstate
 						PlayState.instance.remove(PlayState.instance.videoSprite);
 						PlayState.instance.removedVideo = true;
 					}
-				case "Exit to menu":
+				case "Exit to main menu":
 					PlayState.startTime = 0;
 					if (PlayState.instance.useVideo)
 					{
