@@ -44,8 +44,14 @@ class Alphabet extends FlxSpriteGroup
 
 	var isBold:Bool = false;
 
+	var pastX:Float = 0;
+	var pastY:Float  = 0;
+
 	public function new(x:Float, y:Float, text:String = "", ?bold:Bool = false, typed:Bool = false, shouldMove:Bool = false)
 	{
+		pastX = x;
+		pastY = y;
+
 		super(x, y);
 
 		_finalText = text;
@@ -64,6 +70,24 @@ class Alphabet extends FlxSpriteGroup
 			}
 
 		}
+	}
+
+	public function reType(text)
+	{
+		for (i in listOAlphabets)
+			remove(i);
+		_finalText = text;
+		this.text = text;
+
+		lastSprite = null;
+
+		updateHitbox();
+
+		listOAlphabets.clear();
+		x = pastX;
+		y = pastY;
+		
+		addText();
 	}
 
 	public function addText()
@@ -254,16 +278,22 @@ class AlphaCharacter extends FlxSprite
 		super(x, y);
 		var tex = Paths.getSparrowAtlas('alphabet');
 		frames = tex;
-
-		antialiasing = true;
+		if(FlxG.save.data.antialiasing)
+			{
+				antialiasing = true;
+			}
 	}
 
 	public function createBold(letter:String)
 	{
-		animation.addByPrefix(letter, letter.toUpperCase() + " bold", 24);
-		if(letter == ".") y+=40;
-		if(letter == "_") y+=40;
+		var funletter;
+		if(!"1234567890.|!_%".contains(letter))
+		funletter= letter.toUpperCase();
+		else
+		funletter= letter;
+		animation.addByPrefix(letter, funletter + " bold", 24);
 		animation.play(letter);
+		//trace(letter);
 		updateHitbox();
 	}
 
@@ -280,10 +310,9 @@ class AlphaCharacter extends FlxSprite
 		updateHitbox();
 
 		FlxG.log.add('the row' + row);
+
 		y = (110 - height);
 		y += row * 60;
-		if(letter == ".") y+=50;
-		if(letter == "_") y+=50;
 	}
 
 	public function createNumber(letter:String):Void

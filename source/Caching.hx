@@ -70,9 +70,9 @@ class Caching extends MusicBeatState
 		kadeLogo = new FlxSprite(FlxG.width / 2, FlxG.height / 2).loadGraphic(Paths.image('AikoGamingMixesLogo'));
 		kadeLogo.x -= kadeLogo.width / 2;
 		kadeLogo.y -= kadeLogo.height / 2 + 100;
-		text.y -= kadeLogo.height / 2 - 125;
+		text.y += 125;
 		text.x -= 170;
-		kadeLogo.setGraphicSize(Std.int(kadeLogo.width * 0.6));
+		kadeLogo.setGraphicSize(Std.int(kadeLogo.width * 0.2));
 		kadeLogo.antialiasing = true;
 		
 		kadeLogo.alpha = 0;
