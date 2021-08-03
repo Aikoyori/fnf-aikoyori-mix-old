@@ -44,14 +44,8 @@ class Alphabet extends FlxSpriteGroup
 
 	var isBold:Bool = false;
 
-	var pastX:Float = 0;
-	var pastY:Float  = 0;
-
 	public function new(x:Float, y:Float, text:String = "", ?bold:Bool = false, typed:Bool = false, shouldMove:Bool = false)
 	{
-		pastX = x;
-		pastY = y;
-
 		super(x, y);
 
 		_finalText = text;
@@ -70,24 +64,6 @@ class Alphabet extends FlxSpriteGroup
 			}
 
 		}
-	}
-
-	public function reType(text)
-	{
-		for (i in listOAlphabets)
-			remove(i);
-		_finalText = text;
-		this.text = text;
-
-		lastSprite = null;
-
-		updateHitbox();
-
-		listOAlphabets.clear();
-		x = pastX;
-		y = pastY;
-		
-		addText();
 	}
 
 	public function addText()
@@ -265,7 +241,7 @@ class Alphabet extends FlxSpriteGroup
 
 class AlphaCharacter extends FlxSprite
 {
-	public static var alphabet:String = "abcdefghijklmnopqrstuvwxyz";
+	public static var alphabet:String = "abcdefghijklmnopqrstuvwxyz1234567890.|!_%";
 
 	public static var numbers:String = "1234567890";
 
@@ -278,15 +254,15 @@ class AlphaCharacter extends FlxSprite
 		super(x, y);
 		var tex = Paths.getSparrowAtlas('alphabet');
 		frames = tex;
-		if(FlxG.save.data.antialiasing)
-			{
-				antialiasing = true;
-			}
+
+		antialiasing = true;
 	}
 
 	public function createBold(letter:String)
 	{
 		animation.addByPrefix(letter, letter.toUpperCase() + " bold", 24);
+		if(letter == ".") y+=40;
+		if(letter == "_") y+=40;
 		animation.play(letter);
 		updateHitbox();
 	}
@@ -304,9 +280,10 @@ class AlphaCharacter extends FlxSprite
 		updateHitbox();
 
 		FlxG.log.add('the row' + row);
-
 		y = (110 - height);
 		y += row * 60;
+		if(letter == ".") y+=50;
+		if(letter == "_") y+=50;
 	}
 
 	public function createNumber(letter:String):Void
