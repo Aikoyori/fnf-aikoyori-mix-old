@@ -34,7 +34,7 @@ jobs:
           haxelib install linc_luajit
           haxelib install actuate
           haxelib git extension-webm https://github.com/KadeDev/extension-webm
-          lime rebuild extension-webm macos
+          haxelib run lime rebuild extension-webm macos
           haxelib list
 
       - name: Build macOS debug version

@@ -38,7 +38,7 @@ jobs:
           haxelib git discord_rpc https://github.com/Aidan63/linc_discord-rpc
           haxelib install actuate
           haxelib git extension-webm https://github.com/KadeDev/extension-webm
-          lime rebuild extension-webm windows
+          haxelib run lime rebuild extension-webm windows
           RefreshEnv
 
       - name: Build Windows debug version
