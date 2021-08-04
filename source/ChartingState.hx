@@ -1301,19 +1301,13 @@ class ChartingState extends MusicBeatState
 			{
 				if (nums.value <= 0.1)
 					nums.value = 0.1;
-				_song.opponentHealth = Math.floor(nums.value);
+				_song.opponentHealth = nums.value;
 			}
 			else if (wname == 'song_startinghealth')
 			{
 				if (nums.value <= 0.1)
 					nums.value = 0.1;
-				_song.startingHealth = Math.floor(nums.value);
-			}
-			else if (wname == 'song_startinghealth')
-			{
-				if (nums.value <= 0.1)
-					nums.value = 0.1;
-				_song.startingHealth = Math.floor(nums.value);
+				_song.startingHealth = nums.value;
 			}
 			
 		}		

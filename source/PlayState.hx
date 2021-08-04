@@ -1173,10 +1173,11 @@ class PlayState extends MusicBeatState
 
 		if(SONG.startingHealth>0){
 			health = SONG.startingHealth;
-			SONG.startingHealth = health;}
+		}
 		else{
 			health = 1;
-			SONG.startingHealth = 1;}
+			SONG.startingHealth = 1;
+		}
 		add(camFollow);
 		FlxG.camera.follow(camFollow, LOCKON, 0.04 * (30 / (cast(Lib.current.getChildAt(0), Main)).getFPS()));
 		// FlxG.camera.setScrollBounds(0, FlxG.width, 0, FlxG.height);
