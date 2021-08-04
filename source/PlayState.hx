@@ -1157,6 +1157,10 @@ class PlayState extends MusicBeatState
 			prevCamFollow = null;
 		}
 
+		FlxG.watch.add(this,"health");
+		FlxG.watch.add(SONG,"opponentHealth");
+		FlxG.watch.add(SONG,"startingHealth");
+
 		if(SONG.opponentHealth>0)
 		{
 			maxhealth = SONG.opponentHealth;
@@ -1174,7 +1178,6 @@ class PlayState extends MusicBeatState
 			health = 1;
 			SONG.startingHealth = 1;}
 		add(camFollow);
-
 		FlxG.camera.follow(camFollow, LOCKON, 0.04 * (30 / (cast(Lib.current.getChildAt(0), Main)).getFPS()));
 		// FlxG.camera.setScrollBounds(0, FlxG.width, 0, FlxG.height);
 		FlxG.camera.zoom = defaultCamZoom;

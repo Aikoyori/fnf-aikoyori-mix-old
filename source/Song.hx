@@ -12,6 +12,7 @@ class Event
 	public var name:String;
 	public var position:Float;
 	public var value:Float;
+	public var lerp:Float;
 	public var type:String;
 
 	public function new(name:String,pos:Float,value:Float,type:String)
@@ -46,6 +47,8 @@ typedef SwagSong =
 	var isBossFight:Bool;
 	var opponentHealth:Float;
 	var startingHealth:Float;
+	var healthGainModifier:Float;
+	var healthLossModifier:Float;
 
 }
 
@@ -69,6 +72,9 @@ class Song
 	public var isBossFight:Bool = false;
 	public var opponentHealth:Float = 2.0;
 	public var startingHealth:Float = 1.0;
+	public var healthGainModifier:Float;
+	public var healthLossModifier:Float;
+
 
 
 	public var loopAtStep:Int = 0;
