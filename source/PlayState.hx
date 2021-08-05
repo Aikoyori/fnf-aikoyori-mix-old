@@ -2695,14 +2695,21 @@ class PlayState extends MusicBeatState
 			health = maxhealth;
 
 		if (healthBar.percent < 20)
-			iconP1.animation.curAnim.curFrame = 1;
-		else
+			{
+				iconP1.animation.curAnim.curFrame = 2;
+				iconP2.animation.curAnim.curFrame = 0;
+			}
+		else if (healthBar.percent > 80)
+			{
 			iconP1.animation.curAnim.curFrame = 0;
-
-		if (healthBar.percent > 80)
-			iconP2.animation.curAnim.curFrame = 1;
+			iconP2.animation.curAnim.curFrame = 2;
+			}
 		else
-			iconP2.animation.curAnim.curFrame = 0;
+			{
+
+				iconP1.animation.curAnim.curFrame = 1;
+				iconP2.animation.curAnim.curFrame = 1;
+			}
 
 		/* if (FlxG.keys.justPressed.NINE)
 			FlxG.switchState(new Charting()); */

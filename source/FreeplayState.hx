@@ -197,6 +197,7 @@ class FreeplayState extends MusicBeatState
 
 			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
 			icon.sprTracker = songText;
+			icon.animation.curAnim.curFrame = 1;
 
 			// using a FlxGroup is too much fuss!
 			iconArray.push(icon);

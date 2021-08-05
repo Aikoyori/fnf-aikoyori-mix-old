@@ -210,7 +210,8 @@ class ChartingState extends MusicBeatState
 
 		leftIcon.setGraphicSize(0, 45);
 		rightIcon.setGraphicSize(0, 45);
-
+		leftIcon.animation.curAnim.curFrame = 1;
+		rightIcon.animation.curAnim.curFrame = 1;
 		add(leftIcon);
 		add(rightIcon);
 
@@ -239,7 +240,6 @@ class ChartingState extends MusicBeatState
 		UI_box.resize(300, 400);
 		UI_box.x = FlxG.width / 2;
 		UI_box.y = 20;
-		add(UI_box);
 
 		var opt_tabs = [{name: "Options", label:'Song Options'}, {name: "Events", label:'Song Events'}];
         
@@ -253,6 +253,7 @@ class ChartingState extends MusicBeatState
 		UI_options.y = FlxG.height - 300;
 		add(UI_options);
 		
+		add(UI_box);
 
 		addSongUI();
 		addSectionUI();
@@ -274,6 +275,7 @@ class ChartingState extends MusicBeatState
 			_song.eventObjects = [new Song.Event("Init BPM",0,_song.bpm,"BPM Change")];
 		
         regenerateLines();
+		updateHeads();
 		super.create();
 	}
 
@@ -1882,6 +1884,9 @@ class ChartingState extends MusicBeatState
 			leftIcon.animation.play(_song.player2);
 			rightIcon.animation.play(_song.player1);
 		}
+		
+		leftIcon.animation.curAnim.curFrame = 1;
+		rightIcon.animation.curAnim.curFrame = 1;
 	}
 
 	function updateNoteUI():Void
