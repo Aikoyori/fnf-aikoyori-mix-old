@@ -1424,24 +1424,24 @@ class ChartingState extends MusicBeatState
 
 		if (playClaps)
             {
-                curRenderedNotes.forEach(function(note:Note)
-                {
-                    if (FlxG.sound.music.playing)
-                    {
-                        if (strumLine.overlaps(note))
-                        {
-                        if(!claps.contains(note))
-                            {
-                                claps.push(note);
-                                if (note.noteType=="sun" || note.noteType=="sun-extra") FlxG.sound.play(Paths.sound('sunCollect'));
-                                else if(note.noteType=="sun-bomb") {};
-                                else if(_song.notes[curSection].mustHitSection) FlxG.sound.play(Paths.sound('CLAP'));
-                                else FlxG.sound.play(Paths.sound('SNAP'));
-                            }
-                        }
-                    }
-                }
-                );
+				curRenderedNotes.forEach(function(note:Note)
+					{
+						if (FlxG.sound.music.playing)
+						{
+							FlxG.overlap(strumLine, note, function(_, _)
+							{
+								if(!claps.contains(note))
+								{
+									claps.push(note);
+									if (note.noteType=="sun" || note.noteType=="sun-extra") FlxG.sound.play(Paths.sound('sunCollect'));
+									else if(note.noteType=="sun-bomb") {};
+									else if(_song.notes[curSection].mustHitSection) FlxG.sound.play(Paths.sound('CLAP'));
+									else FlxG.sound.play(Paths.sound('SNAP'));
+								}
+							});
+						}
+					});
+                
             }
 		/*curRenderedNotes.forEach(function(note:Note) {
 			if (strumLine.overlaps(note) && strumLine.y == note.y) // yandere dev type shit

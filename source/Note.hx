@@ -111,8 +111,9 @@ class Note extends FlxSprite
 
 		//defaults if no noteStyle was found in chart
 		var noteTypeCheck:String = 'normal';
-
-		if (inCharter)
+		
+		//if (inCharter)
+		if (false)
 		{
 			frames = Paths.getSparrowAtlas('NOTE_assets');
 
@@ -155,6 +156,18 @@ class Note extends FlxSprite
 						animation.add(dataColor[i] + 'holdend', [i + 4]); // Tails
 					}
 
+					animation.add('sunScroll', [20]);
+					animation.add('sun-extraScroll', [21]);
+					animation.add('sun-bombScroll', [22]);
+
+					animation.add('sunholdend', [12]);
+					animation.add('sun-extraholdend', [13]);
+					animation.add('sun-bombholdend', [14]);
+
+					animation.add('sunhold', [8]);
+					animation.add('sun-extrahold', [9]);
+					animation.add('sun-bombhold', [10]);
+					
 					setGraphicSize(Std.int(width * PlayState.daPixelZoom));
 					updateHitbox();
 				default:
@@ -222,10 +235,17 @@ class Note extends FlxSprite
 
 			var col:Int = 0;
 			col = quantityColor[ind % 8]; // Set the color depending on the beats
+			if(noteType == "normal")
+				{
+					animation.play(dataColor[col] + 'Scroll');
+					localAngle -= arrowAngles[col];
+					localAngle += arrowAngles[noteData];
+				}
+			else
+				{
 
-			animation.play(dataColor[col] + 'Scroll');
-			localAngle -= arrowAngles[col];
-			localAngle += arrowAngles[noteData];
+					animation.play(noteType + 'Scroll');
+				}
 			originColor = col;
 		}
 		
