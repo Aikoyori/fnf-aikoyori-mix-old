@@ -1133,7 +1133,6 @@ class ChartingState extends MusicBeatState
 		tab_group_note.add(stepperSusLengthLabel);
 		tab_group_note.add(applyLength);
 
-		UI_box.addGroup(tab_group_note);
 
 		var noteTypes:Array<String> = CoolUtil.coolTextFile(Paths.txt('data/noteTypesList'));
 		
@@ -1143,7 +1142,7 @@ class ChartingState extends MusicBeatState
                 updateNoteUI();
                 updateGrid();
 			});
-		stepperSusLength.name = 'note_noteType';
+		noteTypeDropDown.name = 'note_noteType';
 		
 		var noteTypeLabel = new FlxText(74,10,'Note Sustain Length');
 
@@ -1153,11 +1152,11 @@ class ChartingState extends MusicBeatState
 
 		tab_group_note.add(stepperSusLength);
 		tab_group_note.add(stepperSusLengthLabel);
-		tab_group_note.add(stepperSusLength);
 		tab_group_note.add(applyLength);
 		tab_group_note.add(noteTypeLabel);
 		tab_group_note.add(noteTypeDropDown);
 
+		UI_box.addGroup(tab_group_note);
 		/*player2 = new Character(0,gridBG.y, _song.player2);
 		player1 = new Boyfriend(player2.width * 0.2,gridBG.y + player2.height, _song.player1);
 
