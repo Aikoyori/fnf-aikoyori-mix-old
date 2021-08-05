@@ -266,7 +266,7 @@ class ChartingState extends MusicBeatState
 
 		add(blackBorder);
 		add(snapText);
-
+		FlxG.watch.add(this,"currentNoteType");
 
 		if (_song.eventObjects == null)
 			_song.eventObjects = [new Song.Event("Init BPM",0,_song.bpm,"BPM Change")];
@@ -1138,9 +1138,8 @@ class ChartingState extends MusicBeatState
 		
 		noteTypeDropDown = new FlxUIDropDownMenu(10, 50, FlxUIDropDownMenu.makeStrIdLabelArray(noteTypes, true), function(noteType:String)
 			{
-				noteTypeDropDown.selectedLabel = currentNoteType;
-                updateNoteUI();
-                updateGrid();
+				//changeNoteType(noteTypes[Std.parseInt(noteType)]);
+				
 			});
 		noteTypeDropDown.name = 'note_noteType';
 		
@@ -1316,15 +1315,17 @@ class ChartingState extends MusicBeatState
 		{
 			var data:FlxUIDropDownMenu = cast sender;
 			var wname = data.name;
+			var value = data.selectedLabel;
 			FlxG.log.add(wname);
 			if (wname == 'note_noteType')
 				{
-					if (curSelectedNote == null)
-						return;
-	
-					if (data.selectedLabel == "")
+					if (data.selectedLabel == "" || data.selectedLabel == null)
 						data.selectedLabel = "normal";
-					curSelectedNote[3] = data.selectedLabel;
+					//curSelectedNote[3] = data.selectedLabel;
+					currentNoteType = value;
+					noteTypeDropDown.selectedLabel = currentNoteType;
+						
+					updateNoteUI();
 					updateGrid();
 				}
 		}
@@ -1754,6 +1755,15 @@ class ChartingState extends MusicBeatState
 		updateGrid();
 	}
 
+	function changeNoteType(type:String):Void
+		{
+			if (curSelectedNote != null)
+			{
+				currentNoteType = type;
+				//curSelectedNote[3] = type;
+			}
+	
+		}
 	override function beatHit() 
 	{
 		trace('beat');
@@ -2180,9 +2190,9 @@ class ChartingState extends MusicBeatState
 		var noteSus = 0;
 
 		if (n != null)
-			_song.notes[curSection].sectionNotes.push([n.strumTime, n.noteData, n.sustainLength]);
+			_song.notes[curSection].sectionNotes.push([n.strumTime, n.noteData, n.sustainLength,n.noteType]);
 		else
-			_song.notes[curSection].sectionNotes.push([noteStrum, noteData, noteSus]);
+			_song.notes[curSection].sectionNotes.push([noteStrum, noteData, noteSus,currentNoteType]);
 
 		var thingy = _song.notes[curSection].sectionNotes[_song.notes[curSection].sectionNotes.length - 1];
 
